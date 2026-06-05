@@ -1,0 +1,230 @@
+/* ============================================================
+   assets/css/auth.css
+   CSS khusus halaman Login & Register
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --blue-dark   : #1a2fa0;
+    --blue-main   : #1e3cbe;
+    --yellow      : #f5c800;
+    --yellow-hover: #e0b600;
+    --white       : #ffffff;
+    --gray-bg     : #f5f6fa;
+    --gray-border : #d8dae8;
+    --text-dark   : #1a1d2e;
+    --text-mid    : #4a4f6a;
+    --text-light  : #9399b2;
+    --red         : #ef4444;
+    --green       : #22c55e;
+    --font        : 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    font-family : var(--font);
+    background  : var(--gray-bg);
+    min-height  : 100vh;
+    display     : flex;
+    align-items : center;
+    justify-content: center;
+    padding     : 24px 16px;
+}
+
+/* ── CARD ───────────────────────────────────────────────────── */
+.auth-card {
+    display       : flex;
+    width         : 960px;
+    min-height    : 560px;
+    border-radius : 20px;
+    overflow      : hidden;
+    box-shadow    : 0 20px 60px rgba(30,60,190,.18);
+}
+
+/* ── LEFT PANEL ─────────────────────────────────────────────── */
+.panel-left {
+    width           : 44%;
+    background      : linear-gradient(160deg, #1a2fa0 0%, #1e3cbe 60%, #2547d0 100%);
+    display         : flex;
+    flex-direction  : column;
+    align-items     : center;
+    justify-content : flex-end;
+    padding         : 40px 32px 0;
+    overflow        : hidden;
+}
+
+.panel-left-content { text-align: center; width: 100%; }
+
+.school-logo {
+    width           : 72px;
+    height          : 72px;
+    border-radius   : 50%;
+    background      : var(--yellow);
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+    margin          : 0 auto 16px;
+    font-size       : 28px;
+    font-weight     : 800;
+    color           : var(--blue-dark);
+    box-shadow      : 0 4px 20px rgba(245,200,0,.4);
+    overflow        : hidden;
+}
+
+.school-logo img { width: 100%; height: 100%; object-fit: cover; }
+
+.school-title    { font-size: 17px; font-weight: 800; color: #fff; letter-spacing: .4px; }
+.school-subtitle { font-size: 21px; font-weight: 800; color: var(--yellow); letter-spacing: 1px; margin-top: 2px; }
+.school-desc     { font-size: 13px; color: rgba(255,255,255,.7); margin-top: 10px; line-height: 1.6; }
+
+.building-img {
+    width         : 100%;
+    margin-top    : 24px;
+    border-radius : 12px 12px 0 0;
+    object-fit    : cover;
+    max-height    : 250px;
+    min-height    : 120px;
+    background    : rgba(0,0,0,.15);
+}
+
+/* ── RIGHT PANEL ────────────────────────────────────────────── */
+.panel-right {
+    width          : 56%;
+    background     : var(--white);
+    display        : flex;
+    flex-direction : column;
+    justify-content: center;
+    padding        : 48px 52px;
+}
+
+/* ── HEADING ────────────────────────────────────────────────── */
+.form-heading { text-align: center; margin-bottom: 28px; }
+.form-heading h1 { font-size: 26px; font-weight: 800; color: var(--blue-dark); }
+.form-heading h1 span { color: var(--yellow); }
+.form-heading p { font-size: 13px; color: var(--text-mid); margin-top: 4px; }
+
+/* ── ALERT ──────────────────────────────────────────────────── */
+.alert {
+    display       : flex;
+    align-items   : center;
+    gap           : 8px;
+    padding       : 10px 14px;
+    border-radius : 10px;
+    font-size     : 13px;
+    margin-bottom : 16px;
+}
+.alert-error   { background: #fff5f5; border: 1px solid #fca5a5; color: var(--red); }
+.alert-success { background: #f0fff4; border: 1px solid #86efac; color: #16a34a; }
+
+/* ── FORM GRID ──────────────────────────────────────────────── */
+.form-grid {
+    display               : grid;
+    grid-template-columns : 1fr 1fr;
+    gap                   : 14px 18px;
+}
+
+.form-group { display: flex; flex-direction: column; }
+.form-group.full { grid-column: 1 / -1; }
+
+.form-group label {
+    font-size   : 13px;
+    font-weight : 600;
+    color       : var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    padding       : 10px 13px;
+    border        : 1.5px solid var(--gray-border);
+    border-radius : 10px;
+    font-size     : 14px;
+    font-family   : var(--font);
+    color         : var(--text-dark);
+    outline       : none;
+    transition    : border-color .2s, box-shadow .2s;
+    width         : 100%;
+}
+
+.form-group input::placeholder { color: var(--text-light); }
+.form-group input:focus {
+    border-color : var(--blue-main);
+    box-shadow   : 0 0 0 3px rgba(30,60,190,.1);
+}
+
+/* ── FOTO UPLOAD ────────────────────────────────────────────── */
+.row-foto {
+    grid-column               : 1 / -1;
+    display                   : grid;
+    grid-template-columns     : 1fr auto;
+    gap                       : 18px;
+    align-items               : start;
+}
+
+.foto-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+.foto-preview {
+    width           : 90px;
+    height          : 90px;
+    border-radius   : 12px;
+    background      : #eef0f8;
+    border          : 2px dashed var(--gray-border);
+    display         : flex;
+    align-items     : center;
+    justify-content : center;
+    overflow        : hidden;
+    cursor          : pointer;
+    transition      : border-color .2s;
+}
+.foto-preview:hover { border-color: var(--blue-main); }
+.foto-preview img   { width: 100%; height: 100%; object-fit: cover; }
+
+.btn-upload {
+    background    : var(--yellow);
+    color         : var(--text-dark);
+    font-family   : var(--font);
+    font-size     : 13px;
+    font-weight   : 700;
+    border        : none;
+    border-radius : 8px;
+    padding       : 7px 16px;
+    cursor        : pointer;
+    transition    : background .2s;
+}
+.btn-upload:hover { background: var(--yellow-hover); }
+#foto-input { display: none; }
+
+/* ── BUTTON ─────────────────────────────────────────────────── */
+.btn-primary {
+    width         : 100%;
+    padding       : 13px;
+    background    : var(--yellow);
+    color         : var(--text-dark);
+    font-family   : var(--font);
+    font-size     : 15px;
+    font-weight   : 700;
+    border        : none;
+    border-radius : 10px;
+    cursor        : pointer;
+    margin-top    : 10px;
+    transition    : background .2s, transform .1s;
+}
+.btn-primary:hover  { background: var(--yellow-hover); }
+.btn-primary:active { transform: scale(.98); }
+
+/* ── FOOTER ─────────────────────────────────────────────────── */
+.form-footer { text-align: center; margin-top: 14px; font-size: 13px; color: var(--text-mid); }
+.form-footer a { color: var(--blue-main); font-weight: 700; text-decoration: none; }
+.form-footer a:hover { text-decoration: underline; }
+
+/* ── RESPONSIVE ─────────────────────────────────────────────── */
+@media (max-width: 720px) {
+    .auth-card    { flex-direction: column; width: 96vw; }
+    .panel-left   { width: 100%; min-height: 220px; }
+    .panel-right  { width: 100%; padding: 32px 24px; }
+    .building-img { max-height: 140px; }
+    .form-grid    { grid-template-columns: 1fr; }
+    .row-foto     { grid-template-columns: 1fr; }
+    .panel-left   { justify-content: center; padding-bottom: 24px; }
+}
