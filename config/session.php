@@ -84,43 +84,38 @@ function cek_profil_siswa(): void
         require_once __DIR__ . '/../config/supabase.php';
     }
 
+    $current = basename($_SERVER['SCRIPT_NAME']);
+
+    // Halaman yang boleh diakses walaupun profil belum lengkap
+    $allowed_pages = [
+        'lengkapi-profil.php',
+        'logout.php',
+        'logout-temp.php'
+    ];
+
+    if (in_array($current, $allowed_pages, true)) {
+        return;
+    }
+
     $user = current_user();
 
     $res = supabase(
         'profil_siswa?user_id=eq.' . $user['id'] . '&select=*&limit=1'
     );
 
-    $p = $res['data'][0] ?? null;
+    $p = $res['data'][0] ?? [];
 
-    $required = [
-        'kelas_id',
-        'tempat_lahir',
-        'tanggal_lahir',
-        'jenis_kelamin',
-        'agama',
-        'alamat',
-        'no_telepon',
-        'nama_orang_tua',
-        'no_telepon_orang_tua'
-    ];
+    $lengkap = !empty($p['kelas_id'])
+        && !empty($p['tempat_lahir'])
+        && !empty($p['tanggal_lahir'])
+        && !empty($p['jenis_kelamin'])
+        && !empty($p['agama'])
+        && !empty($p['alamat'])
+        && !empty($p['no_telepon'])
+        && !empty($p['nama_orang_tua'])
+        && !empty($p['no_telepon_orang_tua']);
 
-    $lengkap = true;
-
-    if (!$p) {
-        $lengkap = false;
-    } else {
-        foreach ($required as $field) {
-            if (empty($p[$field])) {
-                $lengkap = false;
-                break;
-            }
-        }
-    }
-
-    $current = basename($_SERVER['SCRIPT_NAME']);
-
-    // Jangan redirect jika sedang berada di halaman lengkapi profil
-    if (!$lengkap && $current !== 'lengkapi-profil.php') {
+    if (!$lengkap) {
         header('Location: /siswa/lengkapi-profil.php');
         exit;
     }
