@@ -80,28 +80,7 @@ function refresh_role_from_db(): string
 
 function cek_profil_siswa(): void
 {
-    if (!function_exists('supabase')) {
-        require_once __DIR__ . '/../config/supabase.php';
-    }
-
-    $user = current_user();
-    $res  = supabase('profil_siswa?user_id=eq.' . $user['id'] . '&select=*&limit=1');
-    $p    = $res['data'][0] ?? [];
-
-    $lengkap = !empty($p['kelas_id'])
-        && !empty($p['tempat_lahir'])
-        && !empty($p['tanggal_lahir'])
-        && !empty($p['jenis_kelamin'])
-        && !empty($p['agama'])
-        && !empty($p['alamat'])
-        && !empty($p['no_telepon'])
-        && !empty($p['nama_orang_tua'])
-        && !empty($p['no_telepon_orang_tua']);
-
-    if (!$lengkap) {
-        header('Location: /smkn24-tatatertib/siswa/lengkapi-profil.php');
-        exit;
-    }
+    return;
 }
 
 function redirect_by_role(string $role): void
