@@ -115,8 +115,6 @@ if ($totalPoin >= 50 && $no_ortu) {
 
         error_log("WA RESULT:");
         error_log(print_r($wa, true));
-
-        exit;
     }
 }
 
@@ -171,6 +169,9 @@ Sistem Tata Tertib Sekolah";
 // CEK SP2
 // ====================
 
+error_log("SEBELUM IF SP2");
+error_log("TOTAL POIN SP2 = " . $totalPoin);
+
 if ($totalPoin >= 100 && $no_ortu) {
 
     $cekSP2 = supabase_first(
@@ -222,8 +223,6 @@ error_log('WA RESULT: ' . print_r($resultWA, true));
 
     }
 }
-}
-?>
 }
 ?>
 <!DOCTYPE html>
