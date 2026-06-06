@@ -89,13 +89,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
    error_log("TOTAL POIN = " . $totalPoin);
-   error_log("NO ORTU = " . $no_ortu);
+error_log("NO ORTU = " . $no_ortu);
 
-    if ($totalPoin >= 50 && $no_ortu) {
+error_log("SEBELUM IF SP1");
+
+if ($totalPoin >= 50 && $no_ortu) {
+
+    error_log("MASUK IF SP1");
+
     $cekSP1 = supabase_first(
         'riwayat_peringatan?siswa_id=eq.' . $siswa_id .
         '&jenis_sp=eq.SP1'
     );
+
+    error_log("HASIL CEK SP1:");
+    error_log(print_r($cekSP1, true));
+
+    if (!$cekSP1) {
+
+        error_log("AKAN KIRIM WA SP1");
+
+        $pesan = "TEST WA";
+
+        $wa = kirimWA($no_ortu, $pesan);
+
+        error_log("WA RESULT:");
+        error_log(print_r($wa, true));
+
+        exit;
+    }
+}
 
     if (!$cekSP1) {
 
