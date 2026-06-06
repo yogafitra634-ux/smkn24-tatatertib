@@ -2,7 +2,7 @@
 
 function kirimWA($nomor, $pesan)
 {
-    $token = 'TOKEN_KAMU';
+    $token = 'TOKEN_FONNTE_KAMU';
 
     $nomor = preg_replace('/[^0-9]/', '', $nomor);
 
@@ -16,14 +16,17 @@ function kirimWA($nomor, $pesan)
         CURLOPT_URL => 'https://api.fonnte.com/send',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_SSL_VERIFYHOST => false,
+
         CURLOPT_CONNECTTIMEOUT => 30,
         CURLOPT_TIMEOUT => 60,
+
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYHOST => false,
+
         CURLOPT_HTTPHEADER => [
             'Authorization: ' . $token
         ],
+
         CURLOPT_POSTFIELDS => [
             'target'  => $nomor,
             'message' => $pesan
@@ -31,25 +34,25 @@ function kirimWA($nomor, $pesan)
     ]);
 
     $response = curl_exec($curl);
-
-    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     $error    = curl_error($curl);
+    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
     curl_close($curl);
 
-    file_put_contents(
-        __DIR__ . '/wa-debug.log',
-        date('Y-m-d H:i:s') .
-        "\nHTTP: " . $httpCode .
-        "\nERROR: " . $error .
-        "\nRESP: " . $response .
-        "\n----------------\n",
-        FILE_APPEND
-    );
+    error_log("=== FONNTE DEBUG ===");
+    error_log("Nomor: " . $nomor);
+    error_log("HTTP Code: " . $httpCode);
+
+    if ($error) {
+        error_log("cURL Error: " . $error);
+    }
+
+    error_log("Response: " . $response);
 
     return [
-        'http' => $httpCode,
-        'error' => $error,
-        'response' => $response
+        'success'  => empty($error),
+        'httpcode' => $httpCode,
+        'response' => $response,
+        'error'    => $error
     ];
 }
