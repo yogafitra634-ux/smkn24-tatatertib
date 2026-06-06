@@ -2,12 +2,10 @@
 
 function kirimWA($nomor, $pesan)
 {
-    $token = 'GnWUa6uZedzxHLPHGmGi';
+    $token = 'TOKEN_KAMU';
 
-    // Bersihkan nomor
     $nomor = preg_replace('/[^0-9]/', '', $nomor);
 
-    // Ubah 08xxxx menjadi 628xxxx
     if (substr($nomor, 0, 1) === '0') {
         $nomor = '62' . substr($nomor, 1);
     }
@@ -18,15 +16,14 @@ function kirimWA($nomor, $pesan)
         CURLOPT_URL => 'https://api.fonnte.com/send',
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
-
-        // Timeout supaya website tidak loading selamanya
-        CURLOPT_CONNECTTIMEOUT => 5,
-        CURLOPT_TIMEOUT => 10,
-
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_CONNECTTIMEOUT => 30,
+        CURLOPT_TIMEOUT => 60,
         CURLOPT_HTTPHEADER => [
             'Authorization: ' . $token
         ],
-
         CURLOPT_POSTFIELDS => [
             'target'  => $nomor,
             'message' => $pesan
@@ -35,40 +32,24 @@ function kirimWA($nomor, $pesan)
 
     $response = curl_exec($curl);
 
-    // Tangkap error CURL
-    if ($response === false) {
-
-        $error = curl_error($curl);
-
-        error_log(
-            '[FONNTE ERROR] ' .
-            date('Y-m-d H:i:s') .
-            ' | Nomor: ' . $nomor .
-            ' | Error: ' . $error
-        );
-
-        curl_close($curl);
-
-        return [
-            'success' => false,
-            'error'   => $error
-        ];
-    }
-
     $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    $error    = curl_error($curl);
 
     curl_close($curl);
 
-    error_log(
-        '[FONNTE RESPONSE] ' .
+    file_put_contents(
+        __DIR__ . '/wa-debug.log',
         date('Y-m-d H:i:s') .
-        ' | HTTP: ' . $httpCode .
-        ' | Response: ' . $response
+        "\nHTTP: " . $httpCode .
+        "\nERROR: " . $error .
+        "\nRESP: " . $response .
+        "\n----------------\n",
+        FILE_APPEND
     );
 
     return [
-        'success'  => ($httpCode >= 200 && $httpCode < 300),
-        'httpCode' => $httpCode,
+        'http' => $httpCode,
+        'error' => $error,
         'response' => $response
     ];
 }
