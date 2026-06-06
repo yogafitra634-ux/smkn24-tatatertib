@@ -85,8 +85,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $totalPoin = 0;
 
     foreach (($pelRes['data'] ?? []) as $p) {
-        $totalPoin += (int)($p['tata_tertib_id']['poin'] ?? 0);
-    }
+
+    $poin = (int)($p['tata_tertib_id']['poin'] ?? 0);
+
+    error_log("POIN ITEM = " . $poin);
+
+    $totalPoin += $poin;
+}
+
+error_log("TOTAL POIN HITUNG = " . $totalPoin);
 
    error_log("TOTAL POIN = " . $totalPoin);
 error_log("NO ORTU = " . $no_ortu);
