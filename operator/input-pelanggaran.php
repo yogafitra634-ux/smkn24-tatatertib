@@ -120,6 +120,17 @@ if ($totalPoin >= 50 && $no_ortu) {
     }
 }
 
+    // ====================
+// CEK SP1
+// ====================
+
+if ($totalPoin >= 50 && $no_ortu) {
+
+    $cekSP1 = supabase_first(
+        'riwayat_peringatan?siswa_id=eq.' . $siswa_id .
+        '&jenis_sp=eq.SP1'
+    );
+
     if (!$cekSP1) {
 
         $pesan = "📢 SURAT PERINGATAN 1 (SP1)
@@ -144,9 +155,9 @@ Hormat kami,
 SMKN 24 Jakarta
 Sistem Tata Tertib Sekolah";
 
-        error_log("MASUK BLOK SP1");
         $wa = kirimWA($no_ortu, $pesan);
-        error_log("WA RESULT: " . print_r($wa, true));
+
+        error_log('WA SP1: ' . print_r($wa, true));
 
         supabase('riwayat_peringatan', 'POST', [
             'siswa_id'   => $siswa_id,
@@ -203,11 +214,16 @@ error_log('WA RESULT: ' . print_r($resultWA, true));
     }
 }
 
-        $success = 'Pelanggaran berhasil disimpan!';
+                $success = 'Pelanggaran berhasil disimpan!';
+
     } else {
-            $error = 'Gagal menyimpan pelanggaran. Coba lagi.';
-        }
+
+        $error = 'Gagal menyimpan pelanggaran. Coba lagi.';
+
     }
+}
+}
+?>
 }
 ?>
 <!DOCTYPE html>
