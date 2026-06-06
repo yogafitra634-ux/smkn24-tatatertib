@@ -164,7 +164,9 @@ Hormat kami,
 SMKN 24 Jakarta
 Sistem Tata Tertib Sekolah";
 
-        kirimWA($no_ortu, $pesan);
+        $resultWA = kirimWA($no_ortu, $pesan);
+
+error_log('WA RESULT: ' . print_r($resultWA, true));
 
         supabase('riwayat_peringatan', 'POST', [
             'siswa_id'   => $siswa_id,
