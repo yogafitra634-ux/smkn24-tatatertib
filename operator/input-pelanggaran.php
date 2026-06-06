@@ -78,19 +78,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Hitung total poin siswa
     $pelRes = supabase(
-        'pelanggaran?siswa_id=eq.' . $siswa_id .
-        '&select=tata_tertib_id(poin)'
-    );
+    'pelanggaran?siswa_id=eq.' . $siswa_id .
+    '&select=tata_tertib_id(poin)'
+);
 
-    $totalPoin = 0;
+error_log("=== HASIL QUERY PELANGGARAN ===");
+error_log(print_r($pelRes, true));
 
-    foreach (($pelRes['data'] ?? []) as $p) {
+$totalPoin = 0;
+
+foreach (($pelRes['data'] ?? []) as $p) {
+
+    error_log("ITEM:");
+    error_log(print_r($p, true));
 
     $poin = (int)($p['tata_tertib_id']['poin'] ?? 0);
 
     error_log("POIN ITEM = " . $poin);
 
     $totalPoin += $poin;
+}
+
+error_log("TOTAL POIN HITUNG = " . $totalPoin);
 }
 
 error_log("TOTAL POIN HITUNG = " . $totalPoin);
