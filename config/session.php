@@ -11,7 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
 function require_login(): void
 {
     if (empty($_SESSION['user'])) {
-        header('Location: /smkn24-tatatertib/login.php');
+        header('Location: ' . base_url('login.php'));
         exit;
     }
 }
@@ -107,10 +107,10 @@ function cek_profil_siswa(): void
 function redirect_by_role(string $role): void
 {
     $map = [
-        'siswa'    => '/smkn24-tatatertib/siswa/dashboard.php',
-        'operator' => '/smkn24-tatatertib/operator/dashboard.php',
-        'admin'    => '/smkn24-tatatertib/admin/dashboard.php',
-    ];
+    'siswa'    => base_url('siswa/dashboard.php'),
+    'operator' => base_url('operator/dashboard.php'),
+    'admin'    => base_url('admin/dashboard.php'),
+];
     header('Location: ' . ($map[$role] ?? '/smkn24-tatatertib/login.php'));
     exit;
 }
@@ -125,7 +125,7 @@ function redirect_if_logged_in(): void
 
 function base_url(string $path = ''): string
 {
-    return '/smkn24-tatatertib/' . ltrim($path, '/');
+    return '/' . ltrim($path, '/');
 }
 
 function current_user(): ?array
