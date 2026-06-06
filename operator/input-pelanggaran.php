@@ -50,195 +50,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($r['status'] === 201) {
 
-    // Notifikasi siswa
-    supabase('notifikasi', 'POST', [
-        'user_id' => $siswa_id,
-        'judul'   => 'Pelanggaran Baru Dicatat',
-        'pesan'   => 'Kamu memiliki catatan pelanggaran baru pada tanggal '
-                    . date('d/m/Y', strtotime($tanggal)) . '.',
-    ]);
+            // Notifikasi siswa
+            supabase('notifikasi', 'POST', [
+                'user_id' => $siswa_id,
+                'judul'   => 'Pelanggaran Baru Dicatat',
+                'pesan'   => 'Kamu memiliki catatan pelanggaran baru pada tanggal '
+                            . date('d/m/Y', strtotime($tanggal)) . '.',
+            ]);
 
-    
+            // Ambil data siswa
+            $siswa = supabase_first(
+                'users?id=eq.' . $siswa_id .
+                '&select=nama_lengkap,nis_nip'
+            );
 
-    // Ambil data siswa
-    $siswa = supabase_first(
-        'users?id=eq.' . $siswa_id .
-        '&select=nama_lengkap,nis_nip'
-    );
+            // Ambil profil siswa
+            $profil = supabase_first(
+                'profil_siswa?user_id=eq.' . $siswa_id .
+                '&select=no_telepon_orang_tua'
+            );
 
-    // Ambil profil siswa
-    $profil = supabase_first(
-        'profil_siswa?user_id=eq.' . $siswa_id .
-        '&select=no_telepon_orang_tua'
-    );
+            $nama_siswa = $siswa['nama_lengkap'] ?? 'Siswa';
+            $nis_siswa  = $siswa['nis_nip']      ?? '-';
+            $no_ortu    = $profil['no_telepon_orang_tua'] ?? '';
 
-    $nama_siswa = $siswa['nama_lengkap'] ?? 'Siswa';
-    $nis_siswa = $siswa['nis_nip'] ?? '-';
-    $no_ortu    = $profil['no_telepon_orang_tua'] ?? '';
+            // Hitung total poin siswa
+            $pelRes = supabase(
+                'pelanggaran?siswa_id=eq.' . $siswa_id .
+                '&select=tata_tertib_id(poin)'
+            );
 
-    // Hitung total poin siswa
-    $pelRes = supabase(
-    'pelanggaran?siswa_id=eq.' . $siswa_id .
-    '&select=tata_tertib_id(poin)'
-);
+            $totalPoin = 0;
+            foreach (($pelRes['data'] ?? []) as $p) {
+                $totalPoin += (int)($p['tata_tertib_id']['poin'] ?? 0);
+            }
 
-error_log("=== HASIL QUERY PELANGGARAN ===");
-error_log(print_r($pelRes, true));
+            // ====================
+            // CEK SP1
+            // ====================
+            if ($totalPoin >= 50 && $no_ortu) {
+                $cekSP1 = supabase_first(
+                    'riwayat_peringatan?siswa_id=eq.' . $siswa_id .
+                    '&jenis_sp=eq.SP1'
+                );
 
-$totalPoin = 0;
+                if (!$cekSP1) {
+                    $pesan = "📢 SURAT PERINGATAN 1 (SP1)\n\nYth. Bapak/Ibu Orang Tua/Wali,\n\nDengan hormat,\n\nKami menginformasikan bahwa siswa berikut:\n\nNama : {$nama_siswa}\nNIS  : {$nis_siswa}\n\ntelah mencapai total {$totalPoin} poin pelanggaran tata tertib sekolah dan memperoleh Surat Peringatan 1 (SP1).\n\nKami mengharapkan dukungan Bapak/Ibu untuk memberikan pembinaan dan pengawasan agar siswa dapat meningkatkan kedisiplinan.\n\nHormat kami,\nSMKN 24 Jakarta";
 
-foreach (($pelRes['data'] ?? []) as $p) {
+                    kirimWA($no_ortu, $pesan);
 
-    error_log("ITEM:");
-    error_log(print_r($p, true));
+                    supabase('riwayat_peringatan', 'POST', [
+                        'siswa_id'   => $siswa_id,
+                        'jenis_sp'   => 'SP1',
+                        'total_poin' => $totalPoin,
+                    ]);
+                }
+            }
 
-    $poin = (int)($p['tata_tertib_id']['poin'] ?? 0);
+            // ====================
+            // CEK SP2
+            // ====================
+            if ($totalPoin >= 100 && $no_ortu) {
+                $cekSP2 = supabase_first(
+                    'riwayat_peringatan?siswa_id=eq.' . $siswa_id .
+                    '&jenis_sp=eq.SP2'
+                );
 
-    error_log("POIN ITEM = " . $poin);
+                if (!$cekSP2) {
+                    $pesan = "🚨 SURAT PERINGATAN 2 (SP2)\n\nYth. Bapak/Ibu Orang Tua/Wali,\n\nDengan hormat,\n\nKami menginformasikan bahwa siswa berikut:\n\nNama : {$nama_siswa}\nNIS  : {$nis_siswa}\n\ntelah mencapai total {$totalPoin} poin pelanggaran dan memperoleh Surat Peringatan 2 (SP2).\n\nMohon segera berkoordinasi dengan wali kelas atau guru BK.\n\nHormat kami,\nSMKN 24 Jakarta";
 
-    $totalPoin += $poin;
-}
+                    kirimWA($no_ortu, $pesan);
 
-error_log("TOTAL POIN HITUNG = " . $totalPoin);
-}
+                    supabase('riwayat_peringatan', 'POST', [
+                        'siswa_id'   => $siswa_id,
+                        'jenis_sp'   => 'SP2',
+                        'total_poin' => $totalPoin,
+                    ]);
+                }
+            }
 
-error_log("TOTAL POIN HITUNG = " . $totalPoin);
+            $success = 'Pelanggaran berhasil disimpan!';
 
-   error_log("TOTAL POIN = " . $totalPoin);
-error_log("NO ORTU = " . $no_ortu);
-
-error_log("SEBELUM IF SP1");
-
-if ($totalPoin >= 50 && $no_ortu) {
-
-    error_log("MASUK IF SP1");
-
-    $cekSP1 = supabase_first(
-        'riwayat_peringatan?siswa_id=eq.' . $siswa_id .
-        '&jenis_sp=eq.SP1'
-    );
-
-    error_log("HASIL CEK SP1:");
-    error_log(print_r($cekSP1, true));
-
-    if (!$cekSP1) {
-
-        error_log("AKAN KIRIM WA SP1");
-
-        $pesan = "TEST WA";
-
-        $wa = kirimWA($no_ortu, $pesan);
-
-        error_log("WA RESULT:");
-        error_log(print_r($wa, true));
+        } else {
+            $error = 'Gagal menyimpan pelanggaran. Coba lagi.';
+        }
     }
-}
-
-    // ====================
-// CEK SP1
-// ====================
-
-if ($totalPoin >= 50 && $no_ortu) {
-
-    $cekSP1 = supabase_first(
-        'riwayat_peringatan?siswa_id=eq.' . $siswa_id .
-        '&jenis_sp=eq.SP1'
-    );
-
-    if (!$cekSP1) {
-
-        $pesan = "📢 SURAT PERINGATAN 1 (SP1)
-
-Yth. Bapak/Ibu Orang Tua/Wali,
-
-Dengan hormat,
-
-Kami menginformasikan bahwa siswa berikut:
-
-Nama : {$nama_siswa}
-NIS  : {$nis_siswa}
-
-telah mencapai total {$totalPoin} poin pelanggaran tata tertib sekolah dan memperoleh Surat Peringatan 1 (SP1).
-
-Kami mengharapkan dukungan Bapak/Ibu untuk memberikan pembinaan dan pengawasan agar siswa dapat meningkatkan kedisiplinan dan tidak mengulangi pelanggaran di kemudian hari.
-
-Terima kasih atas perhatian dan kerja samanya.
-
-Hormat kami,
-
-SMKN 24 Jakarta
-Sistem Tata Tertib Sekolah";
-
-        $wa = kirimWA($no_ortu, $pesan);
-
-        error_log('WA SP1: ' . print_r($wa, true));
-
-        supabase('riwayat_peringatan', 'POST', [
-            'siswa_id'   => $siswa_id,
-            'jenis_sp'   => 'SP1',
-            'total_poin' => $totalPoin
-        ]);
-    }
-}
-
-// ====================
-// CEK SP2
-// ====================
-
-error_log("SEBELUM IF SP2");
-error_log("TOTAL POIN SP2 = " . $totalPoin);
-
-if ($totalPoin >= 100 && $no_ortu) {
-
-    $cekSP2 = supabase_first(
-        'riwayat_peringatan?siswa_id=eq.' . $siswa_id .
-        '&jenis_sp=eq.SP2'
-    );
-
-    if (!$cekSP2) {
-
-        $pesan = "🚨 SURAT PERINGATAN 2 (SP2)
-
-Yth. Bapak/Ibu Orang Tua/Wali,
-
-Dengan hormat,
-
-Kami menginformasikan bahwa siswa berikut:
-
-Nama : {$nama_siswa}
-NIS  : {$nis_siswa}
-
-telah mencapai total {$totalPoin} poin pelanggaran tata tertib sekolah dan memperoleh Surat Peringatan 2 (SP2).
-
-Sehubungan dengan hal tersebut, kami memohon Bapak/Ibu untuk segera berkoordinasi dengan wali kelas atau guru BK guna melakukan pembinaan dan tindak lanjut yang diperlukan.
-
-Terima kasih atas perhatian dan kerja samanya.
-
-Hormat kami,
-
-SMKN 24 Jakarta
-Sistem Tata Tertib Sekolah";
-
-        $resultWA = kirimWA($no_ortu, $pesan);
-
-error_log('WA RESULT: ' . print_r($resultWA, true));
-
-        supabase('riwayat_peringatan', 'POST', [
-            'siswa_id'   => $siswa_id,
-            'jenis_sp'   => 'SP2',
-            'total_poin' => $totalPoin
-        ]);
-    }
-}
-
-                $success = 'Pelanggaran berhasil disimpan!';
-
-    } else {
-
-        $error = 'Gagal menyimpan pelanggaran. Coba lagi.';
-
-    }
-}
 }
 ?>
 <!DOCTYPE html>
