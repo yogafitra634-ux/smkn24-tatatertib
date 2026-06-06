@@ -88,8 +88,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $totalPoin += (int)($p['tata_tertib_id']['poin'] ?? 0);
     }
 
-    if ($totalPoin >= 50 && $no_ortu) {
+   error_log("TOTAL POIN = " . $totalPoin);
+   error_log("NO ORTU = " . $no_ortu);
 
+    if ($totalPoin >= 50 && $no_ortu) {
     $cekSP1 = supabase_first(
         'riwayat_peringatan?siswa_id=eq.' . $siswa_id .
         '&jenis_sp=eq.SP1'
@@ -119,6 +121,7 @@ Hormat kami,
 SMKN 24 Jakarta
 Sistem Tata Tertib Sekolah";
 
+        error_log("MASUK BLOK SP1");
         $wa = kirimWA($no_ortu, $pesan);
         error_log("WA RESULT: " . print_r($wa, true));
 
