@@ -85,12 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $totalPoin += (int)($p['tata_tertib_id']['poin'] ?? 0);
             }
 
-            // DEBUG SEMENTARA
-error_log("=== CEK KONDISI SP ===");
-error_log("siswa_id : " . $siswa_id);
-error_log("totalPoin: " . $totalPoin);
-error_log("no_ortu  : [" . $no_ortu . "]");
-error_log("kondisi SP1: " . ($totalPoin >= 50 ? 'MASUK' : 'TIDAK (poin < 50)'));
+            
             // ====================
             // CEK SP1
             // ====================
