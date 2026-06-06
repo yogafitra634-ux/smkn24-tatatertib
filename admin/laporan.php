@@ -162,12 +162,7 @@ $kelas_list = $kelas_res['data'] ?? [];
 
                     <!-- Export -->
                     <div class="export-actions">
-                        <button class="btn btn-outline" data-export="excel">
-                            <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                            </svg>
-                            Export Excel
-                        </button>
+                       
                         <button class="btn btn-outline" style="color:var(--red);border-color:#fca5a5" data-export="pdf">
                             <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
