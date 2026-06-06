@@ -2,7 +2,7 @@
 
 function kirimWA($nomor, $pesan)
 {
-    $token = 'TOKEN_FONNTE_KAMU';
+    $token = 'GnWUa6uZedzxHLPHGmGi';
 
     $nomor = preg_replace('/[^0-9]/', '', $nomor);
 
