@@ -80,7 +80,50 @@ function refresh_role_from_db(): string
 
 function cek_profil_siswa(): void
 {
-    return;
+    if (!function_exists('supabase')) {
+        require_once __DIR__ . '/../config/supabase.php';
+    }
+
+    $user = current_user();
+
+    $res = supabase(
+        'profil_siswa?user_id=eq.' . $user['id'] . '&select=*&limit=1'
+    );
+
+    $p = $res['data'][0] ?? null;
+
+    $required = [
+        'kelas_id',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'agama',
+        'alamat',
+        'no_telepon',
+        'nama_orang_tua',
+        'no_telepon_orang_tua'
+    ];
+
+    $lengkap = true;
+
+    if (!$p) {
+        $lengkap = false;
+    } else {
+        foreach ($required as $field) {
+            if (empty($p[$field])) {
+                $lengkap = false;
+                break;
+            }
+        }
+    }
+
+    $current = basename($_SERVER['SCRIPT_NAME']);
+
+    // Jangan redirect jika sedang berada di halaman lengkapi profil
+    if (!$lengkap && $current !== 'lengkapi-profil.php') {
+        header('Location: /siswa/lengkapi-profil.php');
+        exit;
+    }
 }
 
 function redirect_by_role(string $role): void
