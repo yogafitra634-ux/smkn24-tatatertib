@@ -25,7 +25,11 @@ function kirimWA($nomor, $pesan)
         ]
     ]);
 
-    $response = curl_exec($curl);
+   $response = curl_exec($curl);
+
+if ($response === false) {
+    error_log('Fonnte CURL Error: ' . curl_error($curl));
+}
 
     curl_close($curl);
 
